@@ -7,6 +7,23 @@ terraform {
     pingone = {
       source  = "pingidentity/pingone"
     }
+    http = {
+      source = "hashicorp/http"
+      version = "3.1.0"
+    }
+  }
+}
+
+provider "http" {
+  # Configuration options
+}
+
+data "http" "flow_json" {
+  url = "https://raw.githubusercontent.com/tsigle/pingone-terraform/main/flow.json"
+
+  # Optional request headers
+  request_headers = {
+    Accept = "application/json"
   }
 }
 
@@ -65,8 +82,10 @@ resource "pingone_role_assignment_user" "admin_sso" {
   scope_environment_id = resource.pingone_environment.temp_tf_trial.id
 }
 
-module "davinci_flow" {
-  source = "./dv"
+resource "davinci_flow" "flow1" {
+  flow_json = data.http.flow_json.response_body
+  deploy = true
+
   depends_on = [
     pingone_role_assignment_user.admin_sso
   ]

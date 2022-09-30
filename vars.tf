@@ -29,5 +29,6 @@ variable "license_id" {
 variable "admin_user_id" {
 }
 variable "admin_population_id" {
+  default = ""
 }
 
